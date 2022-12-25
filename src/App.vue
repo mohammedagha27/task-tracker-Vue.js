@@ -1,15 +1,23 @@
 <script>
 import TheHeader from "./components/Header.vue";
 import Tasks from "./components/Tasks.vue";
+import AddTask from "./components/AddTask.vue";
 export default {
   name: "App",
-  components: { TheHeader, Tasks },
+  components: { TheHeader, Tasks, AddTask },
   data() {
     return {
       tasks: [],
+      showAddTask: false,
     };
   },
   methods: {
+    showAddTaskForm() {
+      this.showAddTask = !this.showAddTask;
+    },
+    addTask(task) {
+      this.tasks = [...this.tasks, task];
+    },
     onDelete(id) {
       this.tasks = this.tasks.filter((t) => t.id !== id);
     },
@@ -46,7 +54,12 @@ export default {
 
 <template>
   <div class="container">
-    <TheHeader title="Task Tracker" />
+    <TheHeader
+      @show-add-task="showAddTaskForm"
+      :showAddTask="showAddTask"
+      title="Task Tracker"
+    />
+    <AddTask v-if="showAddTask" @add-task="addTask" />
     <Tasks
       @toggle-reminder="toggleReminder"
       @delete-task="onDelete"

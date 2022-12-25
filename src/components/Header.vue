@@ -5,6 +5,7 @@ export default {
   name: "TheHeader",
   props: {
     title: String,
+    showAddTask: Boolean,
   },
   components: {
     TheButton,
@@ -15,7 +16,11 @@ export default {
 <template>
   <header>
     <h1>{{ title }}</h1>
-    <TheButton title="add task" color="green" />
+    <TheButton
+      @click-button="$emit('show-add-task')"
+      :title="showAddTask ? 'close' : 'add task'"
+      :color="showAddTask ? 'red' : 'green'"
+    />
   </header>
 </template>
 

@@ -9,6 +9,16 @@ export default {
       tasks: [],
     };
   },
+  methods: {
+    onDelete(id) {
+      this.tasks = this.tasks.filter((t) => t.id !== id);
+    },
+    toggleReminder(id) {
+      this.tasks = this.tasks.map((t) =>
+        t.id === id ? { ...t, reminder: !t.reminder } : t
+      );
+    },
+  },
   created() {
     this.tasks = [
       {
@@ -37,7 +47,11 @@ export default {
 <template>
   <div class="container">
     <TheHeader title="Task Tracker" />
-    <Tasks :tasks="tasks" />
+    <Tasks
+      @toggle-reminder="toggleReminder"
+      @delete-task="onDelete"
+      :tasks="tasks"
+    />
   </div>
 </template>
 

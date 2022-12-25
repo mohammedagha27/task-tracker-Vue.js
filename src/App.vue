@@ -2,6 +2,8 @@
 import TheHeader from "./components/Header.vue";
 import Tasks from "./components/Tasks.vue";
 import AddTask from "./components/AddTask.vue";
+import axios from "axios";
+import swal from "sweetalert";
 export default {
   name: "App",
   components: { TheHeader, Tasks, AddTask },
@@ -15,39 +17,50 @@ export default {
     showAddTaskForm() {
       this.showAddTask = !this.showAddTask;
     },
-    addTask(task) {
-      this.tasks = [...this.tasks, task];
+    async addTask(task) {
+      try {
+        const { data } = await axios.post("/api/tasks", task);
+        this.tasks = [...this.tasks, data];
+      } catch (err) {
+        swal("error", "something went wrong", "error");
+      }
     },
-    onDelete(id) {
-      this.tasks = this.tasks.filter((t) => t.id !== id);
+    async onDelete(id) {
+      try {
+        await axios.delete(`/api/tasks/${id}`);
+        this.tasks = this.tasks.filter((t) => t.id !== id);
+      } catch (err) {
+        swal("error", "something went wrong", "error");
+      }
     },
-    toggleReminder(id) {
-      this.tasks = this.tasks.map((t) =>
-        t.id === id ? { ...t, reminder: !t.reminder } : t
-      );
+    async getTask(id) {
+      try {
+        const { data } = await axios.get(`/api/tasks/${id}`);
+        return data;
+      } catch (err) {
+        swal("error", "something went wrong", "error");
+      }
+    },
+    async toggleReminder(id) {
+      const task = await this.getTask(id);
+      const newTask = { ...task, reminder: !task.reminder };
+      try {
+        await axios.put(`/api/tasks/${id}`, newTask);
+        this.tasks = this.tasks.map((t) =>
+          t.id === id ? { ...t, reminder: !t.reminder } : t
+        );
+      } catch (err) {
+        swal("error", "something went wrong", "error");
+      }
     },
   },
-  created() {
-    this.tasks = [
-      {
-        id: "1",
-        text: "Doctors Appointment",
-        day: "March 5th at 2:30pm",
-        reminder: true,
-      },
-      {
-        id: "2",
-        text: "Meeting with boss",
-        day: "March 6th at 1:30pm",
-        reminder: true,
-      },
-      {
-        id: "3",
-        text: "Food shopping",
-        day: "March 7th at 2:00pm",
-        reminder: false,
-      },
-    ];
+  async created() {
+    try {
+      const { data } = await axios.get("/api/tasks");
+      this.tasks = data;
+    } catch (err) {
+      swal("error", "something went wrong", "error");
+    }
   },
 };
 </script>

@@ -1,0 +1,22 @@
+{
+  "tasks": [
+    {
+      "id": "12116cbf-bc52-43b7-9873-0d4bbf0bba33",
+      "text": "Debitis dolor quia o",
+      "day": "1",
+      "reminder": true
+    },
+    {
+      "id": "978de0a1-505f-44db-af27-922223b7cc84",
+      "text": "Minus nobis beatae a",
+      "day": "23",
+      "reminder": false
+    },
+    {
+      "id": "c7909c19-3c06-4230-845e-2fcf23883bfe",
+      "text": "Tempore laborum Iu",
+      "day": "15",
+      "reminder": true
+    }
+  ]
+}

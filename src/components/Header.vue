@@ -10,6 +10,11 @@ export default {
   components: {
     TheButton,
   },
+  computed: {
+    showButton() {
+      return this.$route.path === "/";
+    },
+  },
 };
 </script>
 
@@ -17,6 +22,7 @@ export default {
   <header>
     <h1>{{ title }}</h1>
     <TheButton
+      v-if="showButton"
       @click-button="$emit('show-add-task')"
       :title="showAddTask ? 'close' : 'add task'"
       :color="showAddTask ? 'red' : 'green'"

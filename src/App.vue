@@ -1,70 +1,3 @@
-<script>
-import TheHeader from "./components/Header.vue";
-import Tasks from "./components/Tasks.vue";
-import AddTask from "./components/AddTask.vue";
-import axios from "axios";
-import swal from "sweetalert";
-export default {
-  name: "App",
-  components: { TheHeader, Tasks, AddTask },
-  data() {
-    return {
-      tasks: [],
-      showAddTask: false,
-    };
-  },
-  methods: {
-    showAddTaskForm() {
-      this.showAddTask = !this.showAddTask;
-    },
-    async addTask(task) {
-      try {
-        const { data } = await axios.post("/api/tasks", task);
-        this.tasks = [...this.tasks, data];
-      } catch (err) {
-        swal("error", "something went wrong", "error");
-      }
-    },
-    async onDelete(id) {
-      try {
-        await axios.delete(`/api/tasks/${id}`);
-        this.tasks = this.tasks.filter((t) => t.id !== id);
-      } catch (err) {
-        swal("error", "something went wrong", "error");
-      }
-    },
-    async getTask(id) {
-      try {
-        const { data } = await axios.get(`/api/tasks/${id}`);
-        return data;
-      } catch (err) {
-        swal("error", "something went wrong", "error");
-      }
-    },
-    async toggleReminder(id) {
-      const task = await this.getTask(id);
-      const newTask = { ...task, reminder: !task.reminder };
-      try {
-        await axios.put(`/api/tasks/${id}`, newTask);
-        this.tasks = this.tasks.map((t) =>
-          t.id === id ? { ...t, reminder: !t.reminder } : t
-        );
-      } catch (err) {
-        swal("error", "something went wrong", "error");
-      }
-    },
-  },
-  async created() {
-    try {
-      const { data } = await axios.get("/api/tasks");
-      this.tasks = data;
-    } catch (err) {
-      swal("error", "something went wrong", "error");
-    }
-  },
-};
-</script>
-
 <template>
   <div class="container">
     <TheHeader
@@ -72,15 +5,30 @@ export default {
       :showAddTask="showAddTask"
       title="Task Tracker"
     />
-    <AddTask v-if="showAddTask" @add-task="addTask" />
-    <Tasks
-      @toggle-reminder="toggleReminder"
-      @delete-task="onDelete"
-      :tasks="tasks"
-    />
+    <router-view :showAddTask="showAddTask" />
+    <Footer />
   </div>
 </template>
 
+<script>
+import TheHeader from "./components/Header.vue";
+import Footer from "./components/Footer.vue";
+export default {
+  name: "App",
+  // eslint-disable-next-line vue/no-reserved-component-names
+  components: { TheHeader, Footer },
+  data() {
+    return {
+      showAddTask: false,
+    };
+  },
+  methods: {
+    showAddTaskForm() {
+      this.showAddTask = !this.showAddTask;
+    },
+  },
+};
+</script>
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap");
 * {
